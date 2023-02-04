@@ -22,7 +22,7 @@ FROM alpine:latest
 # Copy the compiled binary from the builder stage
 COPY --from=builder /app/main /app/
 
-EXPOSE 5000
+EXPOSE 8080
 
 # Set the working directory to /app
 WORKDIR /app
