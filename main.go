@@ -36,18 +36,18 @@ type checkout struct {
 }
 
 func main() {
-	//loading environmental variables
-	err := godotenv.Load()
-	if err != nil {
-		log.Fatal("Error loading .env file")
-	}
-
 	router := mux.NewRouter()
 	router.HandleFunc("/shoppingCart", shoppingCartItemEndpoint	).Methods("GET","POST")
 	router.HandleFunc("/shoppingCartUser", shoppingCartCreateEndpoint).Methods("GET","POST")
 	router.HandleFunc("/checkout", checkoutEndpoint).Methods("POST")
 	fmt.Println("Listening at port 5000")
 	log.Fatal(http.ListenAndServe(":5000", router))
+
+	// //loading environmental variables
+	// err := godotenv.Load()
+	// if err != nil {
+	// 	log.Fatal("Error loading .env file")
+	// }
 }
 
 func shoppingCartCreateEndpoint(w http.ResponseWriter, r *http.Request) {
