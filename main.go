@@ -12,7 +12,7 @@ import (
 	_ "time"
 	// "strings"
 	_ "strconv"
-	_ "github.com/joho/godotenv"
+	"github.com/joho/godotenv"
 )
 
 type shoppingCart struct {
@@ -43,11 +43,11 @@ func main() {
 	fmt.Println("Listening at port 5000")
 	log.Fatal(http.ListenAndServe(":5000", router))
 
-	// //loading environmental variables
-	// err := godotenv.Load()
-	// if err != nil {
-	// 	log.Fatal("Error loading .env file")
-	// }
+	//loading environmental variables
+	err := godotenv.Load(".env")
+	if err != nil {
+		log.Fatal("Error loading .env file")
+	}
 }
 
 func shoppingCartCreateEndpoint(w http.ResponseWriter, r *http.Request) {
