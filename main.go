@@ -12,7 +12,7 @@ import (
 	_ "time"
 	// "strings"
 	_ "strconv"
-	"github.com/joho/godotenv"
+	_ "github.com/joho/godotenv"
 )
 
 type shoppingCart struct {
