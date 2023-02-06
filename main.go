@@ -38,7 +38,7 @@ type checkout struct {
 
 func main() {
 	router := mux.NewRouter()
-	router.HandleFunc("/api/v1/shoppingCart", shoppingCartItemEndpoint	).Methods("GET","POST")
+	router.HandleFunc("/api/v1/shoppingCart", shoppingCartItemEndpoint).Methods("GET","POST")
 	router.HandleFunc("/api/v1/shoppingCartUser", shoppingCartCreateEndpoint).Methods("GET","POST")
 	router.HandleFunc("/api/v1/checkout", checkoutEndpoint).Methods("POST")
 	fmt.Println("Listening at port 5000")
