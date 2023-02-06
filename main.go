@@ -47,6 +47,7 @@ func main() {
 
 func shoppingCartCreateEndpoint(w http.ResponseWriter, r *http.Request) {
 	dbApiKey := os.Getenv("API_KEY")
+	dbReadApiKey := os.Getenv("READ_API_KEY")
 	dbPassword := os.Getenv("DB_PASSWORD")
 	dbName := os.Getenv("DB_HOST")
 	dbUser := os.Getenv("DB_USER")
@@ -56,7 +57,7 @@ func shoppingCartCreateEndpoint(w http.ResponseWriter, r *http.Request) {
 		userID := querystringmap.Get("UserID")
 
 		//Opening database connection
-		db, err := sql.Open("mysql","root:root@tcp(127.0.0.1:5221)/etiassign")
+		db, err := sql.Open("mysql", dbUser + ":" + dbPassword + "@tcp(" + dbApiKey + ")/" + dbName)
 		// handle error upon failure
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusBadRequest)
@@ -64,7 +65,7 @@ func shoppingCartCreateEndpoint(w http.ResponseWriter, r *http.Request) {
 		defer db.Close()
 		
 		//inserting values into passenger table
-		_, err = db.Exec("insert into shopping_cart_item (UserID) values(?)", userID)
+		_, err = db.Exec("insert into shopping_cart_user (UserID) values(?)", userID)
 		//Handling error of SQL statement
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusBadRequest)
@@ -74,7 +75,7 @@ func shoppingCartCreateEndpoint(w http.ResponseWriter, r *http.Request) {
 		querystringmap := r.URL.Query()
 		userID := querystringmap.Get("UserID")
 		//Opening database connection
-		db, err := sql.Open("mysql", dbUser + ":" + dbPassword + "@tcp(" + dbApiKey + ")/" + dbName)
+		db, err := sql.Open("mysql", dbUser + ":" + dbPassword + "@tcp(" + dbReadApiKey + ")/" + dbName)
 		// handle error upon failure
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusBadRequest)
@@ -106,12 +107,18 @@ func shoppingCartCreateEndpoint(w http.ResponseWriter, r *http.Request) {
 
 func checkoutEndpoint(w http.ResponseWriter, r *http.Request) {
 
+	dbApiKey := os.Getenv("API_KEY")
+	// dbReadApiKey := os.Getenv("READ_API_KEY")
+	dbPassword := os.Getenv("DB_PASSWORD")
+	dbName := os.Getenv("DB_HOST")
+	dbUser := os.Getenv("DB_USER")
+
 	if r.Method == "POST"{
 		if body, err := ioutil.ReadAll(r.Body); err == nil {
 			var checkout checkout
 			if err := json.Unmarshal(body, &checkout); err == nil{
 				//Opening database connection
-				db, err := sql.Open("mysql","root:root@tcp(127.0.0.1:5221)/etiassign")
+				db, err := sql.Open("mysql", dbUser + ":" + dbPassword + "@tcp(" + dbApiKey + ")/" + dbName)
 				// handle error upon failure
 				if err != nil {
 					http.Error(w, err.Error(), http.StatusBadRequest)
@@ -142,13 +149,19 @@ func checkoutEndpoint(w http.ResponseWriter, r *http.Request) {
 
 func shoppingCartItemEndpoint(w http.ResponseWriter, r *http.Request) {
 
+	dbApiKey := os.Getenv("API_KEY")
+	dbReadApiKey := os.Getenv("READ_API_KEY")
+	dbPassword := os.Getenv("DB_PASSWORD")
+	dbName := os.Getenv("DB_HOST")
+	dbUser := os.Getenv("DB_USER")
+
 	//Getting the items inside of the shopping cart
 	if r.Method == "GET"{
 		querystringmap := r.URL.Query()
 		inputShopCartID := querystringmap.Get("ShopCartID")
 		
 		//Opening database connection
-		db, err := sql.Open("mysql","root:root@tcp(127.0.0.1:5221)/etiassign")
+		db, err := sql.Open("mysql", dbUser + ":" + dbPassword + "@tcp(" + dbReadApiKey + ")/" + dbName)
 		// handle error upon failure
 		if err != nil {
 			http.Error(w, "Unable to connect", http.StatusBadRequest)
@@ -181,7 +194,7 @@ func shoppingCartItemEndpoint(w http.ResponseWriter, r *http.Request) {
 				// newShopItem.Quantity = 1
 				if err := json.Unmarshal(body, &newShopItem); err == nil{
 					//Opening database connection
-					db, err := sql.Open("mysql","root:root@tcp(127.0.0.1:5221)/etiassign")
+					db, err := sql.Open("mysql", dbUser + ":" + dbPassword + "@tcp(" + dbApiKey + ")/" + dbName)
 					// handle error upon failure
 					if err != nil {
 						http.Error(w, err.Error(), http.StatusBadRequest)
