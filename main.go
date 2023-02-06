@@ -39,7 +39,7 @@ func main() {
 	router := mux.NewRouter()
 	router.HandleFunc("/api/v1/shoppingCart", shoppingCartItemEndpoint).Methods("GET","POST")
 	router.HandleFunc("/api/v1/shoppingCartUser", shoppingCartCreateEndpoint).Methods("GET","POST")
-	router.HandleFunc("/api/v1/checkout", checkoutEndpoint).Methods("POST")
+	router.HandleFunc("/api/v1/checkout", checkoutEndpoint).Methods("GET","POST")
 	fmt.Println("Listening at port 5000")
 
 	log.Fatal(http.ListenAndServe(":5000", router))
@@ -138,7 +138,7 @@ func checkoutEndpoint(w http.ResponseWriter, r *http.Request) {
 				w.WriteHeader(http.StatusAccepted)
 
 				//inserting values into passenger table
-				_, err = db.Exec("update checkout set IsCheckout = 1 where ShopCart_ID = ?", checkout.ShopCartID)
+				_, err = db.Exec("update checkout set IsCheckout = 1 where ShopCartID = ?", checkout.ShopCartID)
 				//Handling error of SQL statement
 				if err != nil {
 					http.Error(w, err.Error(), http.StatusBadRequest)
