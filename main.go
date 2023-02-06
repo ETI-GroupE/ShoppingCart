@@ -13,6 +13,7 @@ import (
 	// "strings"
 	_ "strconv"
 	"os"
+	"github.com/rs/cors"
 )
 
 type shoppingCart struct {
@@ -37,12 +38,20 @@ type checkout struct {
 
 func main() {
 	router := mux.NewRouter()
-	router.HandleFunc("/shoppingCart", shoppingCartItemEndpoint	).Methods("GET","POST")
-	router.HandleFunc("/shoppingCartUser", shoppingCartCreateEndpoint).Methods("GET","POST")
-	router.HandleFunc("/checkout", checkoutEndpoint).Methods("POST")
+	router.HandleFunc("/api/v1/shoppingCart", shoppingCartItemEndpoint	).Methods("GET","POST")
+	router.HandleFunc("/api/v1/shoppingCartUser", shoppingCartCreateEndpoint).Methods("GET","POST")
+	router.HandleFunc("/api/v1/checkout", checkoutEndpoint).Methods("POST")
 	fmt.Println("Listening at port 5000")
-	log.Fatal(http.ListenAndServe(":5000", router))
 
+	// Add CORS support
+	c := cors.New(cors.Options{
+		AllowedOrigins: []string{"*"},
+		AllowedMethods: []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
+		AllowedHeaders: []string{"Content-Type", "Authorization"},
+	})
+	handler := c.Handler(router)
+
+	log.Fatal(http.ListenAndServe(":5000", handler))
 }
 
 func shoppingCartCreateEndpoint(w http.ResponseWriter, r *http.Request) {
