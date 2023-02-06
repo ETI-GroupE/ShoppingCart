@@ -103,7 +103,7 @@ func shoppingCartCreateEndpoint(w http.ResponseWriter, r *http.Request) {
 		output, _ := json.Marshal(shoppingCartUsers)
 		w.WriteHeader(http.StatusAccepted)
 		fmt.Fprintf(w, string(output))
-		
+
 	} else{
 		http.Error(w, "Bad Request", http.StatusBadRequest)
 	}
@@ -171,8 +171,7 @@ func shoppingCartItemEndpoint(w http.ResponseWriter, r *http.Request) {
 			http.Error(w, "Unable to connect", http.StatusBadRequest)
 		}
 		defer db.Close()
-
-		var ShoppingCart shoppingCart
+		var ShoppingCart []shoppingCart
 		cartItemResults, err := db.Query("select * from shopping_cart where ShopCartID = ?", inputShopCartID)
 		//Handling error of SQL statement
 		if err != nil {
@@ -180,15 +179,18 @@ func shoppingCartItemEndpoint(w http.ResponseWriter, r *http.Request) {
 			panic(err.Error())
 		}
 		for cartItemResults.Next() {
-			err = cartItemResults.Scan( &ShoppingCart.ShopCartID, &ShoppingCart.ProductID, &ShoppingCart.Quantity )
+			var ShoppingCartItem shoppingCart
+			err = cartItemResults.Scan( &ShoppingCartItem.ShopCartID, &ShoppingCartItem.ProductID, &ShoppingCartItem.Quantity )
 				if err != nil {
 					http.Error(w, "Missing data", http.StatusBadRequest)
 				} else {
-					output, _ := json.Marshal(ShoppingCart)
-					w.WriteHeader(http.StatusAccepted)
-					fmt.Fprintf(w, string(output))
+					ShoppingCart = append(ShoppingCart, ShoppingCartItem)
 				}
 		}
+
+		output, _ := json.Marshal(ShoppingCart)
+		w.WriteHeader(http.StatusAccepted)
+		fmt.Fprintf(w, string(output))
 
 	} else if r.Method =="POST"{
 		if body, err := ioutil.ReadAll(r.Body); err == nil {
