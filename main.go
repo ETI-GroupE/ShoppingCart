@@ -84,7 +84,7 @@ func shoppingCartCreateEndpoint(w http.ResponseWriter, r *http.Request) {
 		}
 		defer db.Close()
 		
-		var shoppingCartUser shoppingCartUser
+		var shoppingCartUsers []shoppingCartUser
 		results, err := db.Query("select * from shopping_cart_user where UserID = ?", userID)
 		//Handling error of SQL statement
 		if err != nil {
@@ -92,13 +92,12 @@ func shoppingCartCreateEndpoint(w http.ResponseWriter, r *http.Request) {
 			panic(err.Error())
 		}
 		for results.Next() {
-			err = results.Scan( &shoppingCartUser.ShopCartID, &shoppingCartUser.UserID, &shoppingCartUser.IsCheckout )
+			var scu shoppingCartUser
+			err = results.Scan( &scu.ShopCartID, &scu.UserID, &scu.IsCheckout )
 				if err != nil {
 					http.Error(w, "Missing data", http.StatusBadRequest)
 				} else {
-					output, _ := json.Marshal(shoppingCartUser)
-					w.WriteHeader(http.StatusAccepted)
-					fmt.Fprintf(w, string(output))
+					shoppingCartUsers = append(shoppingCartUsers, scu)
 				}
 		}
 
