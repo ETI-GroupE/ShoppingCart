@@ -98,6 +98,9 @@ func shoppingCartCreateEndpoint(w http.ResponseWriter, r *http.Request) {
 					http.Error(w, "Missing data", http.StatusBadRequest)
 				} else {
 					shoppingCartUsers = append(shoppingCartUsers, scu)
+					output, _ := json.Marshal(shoppingCartUsers)
+					w.WriteHeader(http.StatusAccepted)
+					fmt.Fprintf(w, string(output))
 				}
 		}
 
