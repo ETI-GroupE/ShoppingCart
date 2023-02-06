@@ -112,7 +112,7 @@ func shoppingCartCreateEndpoint(w http.ResponseWriter, r *http.Request) {
 func checkoutEndpoint(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Access-Control-Allow-Origin", "*")
 	dbApiKey := os.Getenv("API_KEY")
-	// dbReadApiKey := os.Getenv("READ_API_KEY")
+	dbReadApiKey := os.Getenv("READ_API_KEY")
 	dbPassword := os.Getenv("DB_PASSWORD")
 	dbName := os.Getenv("DB_HOST")
 	dbUser := os.Getenv("DB_USER")
@@ -130,7 +130,7 @@ func checkoutEndpoint(w http.ResponseWriter, r *http.Request) {
 				defer db.Close()
 				
 				//inserting values into passenger table
-				_, err = db.Exec("insert into checkout (ShopCartID, UserID, EmailAddr, Shipping, CreditCard) values(?,?,?,?,?)", checkout.ShopCartID, checkout.EmailAddr, checkout.Shipping, checkout.CreditCard, checkout.TotalPayment)
+				_, err = db.Exec("insert into checkout (ShopCartID, TotalPayment, EmailAddr, Shipping, CreditCard) values(?,?,?,?,?)", checkout.ShopCartID, checkout.EmailAddr, checkout.Shipping, checkout.CreditCard, checkout.TotalPayment)
 				//Handling error of SQL statement
 				if err != nil {
 					http.Error(w, err.Error(), http.StatusBadRequest)
@@ -146,7 +146,38 @@ func checkoutEndpoint(w http.ResponseWriter, r *http.Request) {
 				w.WriteHeader(http.StatusAccepted)
 			}
 		}
-	} else {
+	} else if r.Method == "GET"{
+		querystringmap := r.URL.Query()
+		userID := querystringmap.Get("ShopCartID")
+		//Opening database connection
+		db, err := sql.Open("mysql", dbUser + ":" + dbPassword + "@tcp(" + dbReadApiKey + ")/" + dbName)
+		// handle error upon failure
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusBadRequest)
+		}
+		defer db.Close()
+		
+		var checkoutCart []checkout
+		results, err := db.Query("select * from checkout where ShopCartID = ?", userID)
+		//Handling error of SQL statement
+		if err != nil {
+			http.Error(w, "Missing data", http.StatusBadRequest)
+			panic(err.Error())
+		}
+		for results.Next() {
+			var checkoutDetails checkout
+			err = results.Scan( &checkoutDetails.ShopCartID, &checkoutDetails.TotalPayment, &checkoutDetails.EmailAddr, &checkoutDetails.Shipping,&checkoutDetails.CreditCard)
+				if err != nil {
+					http.Error(w, "Missing data", http.StatusBadRequest)
+				} else {
+					checkoutCart = append(checkoutCart, checkoutDetails)
+				}
+		}
+		
+		output, _ := json.Marshal(checkoutCart)
+		w.WriteHeader(http.StatusAccepted)
+		fmt.Fprintf(w, string(output))
+	} else{
 		http.Error(w, "Bad Request", http.StatusBadRequest)
 	}
 }
