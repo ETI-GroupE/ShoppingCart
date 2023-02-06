@@ -29,10 +29,11 @@ type shoppingCartUser struct {
 
 type checkout struct {
 	ShopCartID   int    `json:"shopCartID"`
-	TotalPayment int 	`json:"totalPayment"`
 	EmailAddr	 string	`json:"emailAddr"`
 	Shipping	 string `json:"shipping"`
+	PostalCode 	 int 	`json:"postalCode"`
 	CreditCard	 string `json:"creditCard"`
+	TotalPayment int 	`json:"totalPayment"`
 }
 
 func main() {
@@ -130,7 +131,7 @@ func checkoutEndpoint(w http.ResponseWriter, r *http.Request) {
 				defer db.Close()
 				
 				//inserting values into passenger table
-				_, err = db.Exec("insert into checkout (ShopCartID, TotalPayment, EmailAddr, Shipping, CreditCard) values(?,?,?,?,?)", checkout.ShopCartID, checkout.EmailAddr, checkout.Shipping, checkout.CreditCard, checkout.TotalPayment)
+				_, err = db.Exec("insert into checkout (ShopCartID, EmailAddr, Shipping,PostalCode, CreditCard,TotalPayment) values(?,?,?,?,?,?)", checkout.ShopCartID, checkout.EmailAddr, checkout.Shipping,checkout.PostalCode, checkout.CreditCard, checkout.TotalPayment)
 				//Handling error of SQL statement
 				if err != nil {
 					http.Error(w, err.Error(), http.StatusBadRequest)
@@ -138,7 +139,7 @@ func checkoutEndpoint(w http.ResponseWriter, r *http.Request) {
 				w.WriteHeader(http.StatusAccepted)
 
 				//inserting values into passenger table
-				_, err = db.Exec("update checkout set IsCheckout = 1 where ShopCartID = ?", checkout.ShopCartID)
+				_, err = db.Exec("update shopping_cart_user set IsCheckout = 1 where ShopCartID = ?", checkout.ShopCartID)
 				//Handling error of SQL statement
 				if err != nil {
 					http.Error(w, err.Error(), http.StatusBadRequest)
@@ -166,7 +167,7 @@ func checkoutEndpoint(w http.ResponseWriter, r *http.Request) {
 		}
 		for results.Next() {
 			var checkoutDetails checkout
-			err = results.Scan( &checkoutDetails.ShopCartID, &checkoutDetails.TotalPayment, &checkoutDetails.EmailAddr, &checkoutDetails.Shipping,&checkoutDetails.CreditCard)
+			err = results.Scan( &checkoutDetails.ShopCartID, &checkoutDetails.EmailAddr, &checkoutDetails.Shipping,  &checkoutDetails.PostalCode, &checkoutDetails.CreditCard,&checkoutDetails.TotalPayment)
 				if err != nil {
 					http.Error(w, "Missing data", http.StatusBadRequest)
 				} else {
