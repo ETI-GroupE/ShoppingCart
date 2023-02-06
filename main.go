@@ -12,7 +12,7 @@ import (
 	_ "time"
 	// "strings"
 	_ "strconv"
-	"github.com/joho/godotenv"
+	"os"
 )
 
 type shoppingCart struct {
@@ -43,14 +43,14 @@ func main() {
 	fmt.Println("Listening at port 5000")
 	log.Fatal(http.ListenAndServe(":5000", router))
 
-	//loading environmental variables
-	err := godotenv.Load(".env")
-	if err != nil {
-		log.Fatal("Error loading .env file")
-	}
 }
 
 func shoppingCartCreateEndpoint(w http.ResponseWriter, r *http.Request) {
+	dbApiKey := os.Getenv("API_KEY")
+	dbPassword := os.Getenv("DB_PASSWORD")
+	dbName := os.Getenv("DB_HOST")
+	dbUser := os.Getenv("DB_USER")
+
 	if r.Method == "POST" {
 		querystringmap := r.URL.Query()
 		userID := querystringmap.Get("UserID")
@@ -74,7 +74,7 @@ func shoppingCartCreateEndpoint(w http.ResponseWriter, r *http.Request) {
 		querystringmap := r.URL.Query()
 		userID := querystringmap.Get("UserID")
 		//Opening database connection
-		db, err := sql.Open("mysql","root:root@tcp(127.0.0.1:5221)/etiassign")
+		db, err := sql.Open("mysql", dbUser + ":" + dbPassword + "@tcp(" + dbApiKey + ")/" + dbName)
 		// handle error upon failure
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusBadRequest)
@@ -105,6 +105,7 @@ func shoppingCartCreateEndpoint(w http.ResponseWriter, r *http.Request) {
 }
 
 func checkoutEndpoint(w http.ResponseWriter, r *http.Request) {
+
 	if r.Method == "POST"{
 		if body, err := ioutil.ReadAll(r.Body); err == nil {
 			var checkout checkout
@@ -140,6 +141,7 @@ func checkoutEndpoint(w http.ResponseWriter, r *http.Request) {
 }
 
 func shoppingCartItemEndpoint(w http.ResponseWriter, r *http.Request) {
+
 	//Getting the items inside of the shopping cart
 	if r.Method == "GET"{
 		querystringmap := r.URL.Query()
