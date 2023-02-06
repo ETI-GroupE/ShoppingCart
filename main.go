@@ -179,7 +179,7 @@ func shoppingCartItemEndpoint(w http.ResponseWriter, r *http.Request) {
 		defer db.Close()
 
 		var ShoppingCart shoppingCart
-		cartItemResults, err := db.Query("select * from shopping_cart where ShopCart_ID = ?", inputShopCartID)
+		cartItemResults, err := db.Query("select * from shopping_cart where ShopCartID = ?", inputShopCartID)
 		//Handling error of SQL statement
 		if err != nil {
 			http.Error(w, "Missing data", http.StatusBadRequest)
@@ -196,32 +196,32 @@ func shoppingCartItemEndpoint(w http.ResponseWriter, r *http.Request) {
 				}
 		}
 
-		} else if r.Method =="POST"{
-			if body, err := ioutil.ReadAll(r.Body); err == nil {
-				var newShopItem shoppingCart
-				// newShopItem.ShopCartID = 1
-				// newShopItem.ProductID = 1
-				// newShopItem.Quantity = 1
-				if err := json.Unmarshal(body, &newShopItem); err == nil{
-					//Opening database connection
-					db, err := sql.Open("mysql", dbUser + ":" + dbPassword + "@tcp(" + dbApiKey + ")/" + dbName)
-					// handle error upon failure
-					if err != nil {
-						http.Error(w, err.Error(), http.StatusBadRequest)
-					}
-					defer db.Close()
-					
-					//inserting values into passenger table
-					_, err = db.Exec("insert into shopping_cart (ShopCart_ID, product_ID, Quantity) values(?, ?, ?)", newShopItem.ShopCartID, newShopItem.ProductID, newShopItem.Quantity)
-					//Handling error of SQL statement
-					if err != nil {
-						http.Error(w, err.Error(), http.StatusBadRequest)
-					}
-					w.WriteHeader(http.StatusAccepted)
+	} else if r.Method =="POST"{
+		if body, err := ioutil.ReadAll(r.Body); err == nil {
+			var newShopItem shoppingCart
+			// newShopItem.ShopCartID = 1
+			// newShopItem.ProductID = 1
+			// newShopItem.Quantity = 1
+			if err := json.Unmarshal(body, &newShopItem); err == nil{
+				//Opening database connection
+				db, err := sql.Open("mysql", dbUser + ":" + dbPassword + "@tcp(" + dbApiKey + ")/" + dbName)
+				// handle error upon failure
+				if err != nil {
+					http.Error(w, err.Error(), http.StatusBadRequest)
 				}
+				defer db.Close()
+				
+				//inserting values into passenger table
+				_, err = db.Exec("insert into shopping_cart (ShopCartID, productID, Quantity) values(?, ?, ?)", newShopItem.ShopCartID, newShopItem.ProductID, newShopItem.Quantity)
+				//Handling error of SQL statement
+				if err != nil {
+					http.Error(w, err.Error(), http.StatusBadRequest)
+				}
+				w.WriteHeader(http.StatusAccepted)
 			}
-		} else {
-			http.Error(w, "Bad Request", http.StatusBadRequest)
 		}
+	} else {
+		http.Error(w, "Bad Request", http.StatusBadRequest)
+	}
 
 }
