@@ -142,7 +142,6 @@ func checkoutEndpoint(w http.ResponseWriter, r *http.Request) {
 				if err != nil {
 					http.Error(w, err.Error(), http.StatusBadRequest)
 				}
-				w.WriteHeader(http.StatusAccepted)
 
 				//inserting values into passenger table
 				_, err = db.Exec("update shopping_cart_user set IsCheckout = 1 where ShopCartID = ?", checkout.ShopCartID)
