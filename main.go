@@ -118,6 +118,7 @@ func checkoutEndpoint(w http.ResponseWriter, r *http.Request) {
 	header.Add("Access-Control-Allow-Origin", "*")
 	header.Add("Access-Control-Allow-Methods", "DELETE, POST, GET, OPTIONS")
 	header.Add("Access-Control-Allow-Headers", "Content-Type, Authorization, X-Requested-With")
+	w.WriteHeader(http.StatusOK)
 	dbApiKey := os.Getenv("API_KEY")
 	dbReadApiKey := os.Getenv("READ_API_KEY")
 	dbPassword := os.Getenv("DB_PASSWORD")
