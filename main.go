@@ -70,11 +70,14 @@ func shoppingCartCreateEndpoint(w http.ResponseWriter, r *http.Request) {
 		defer db.Close()
 		
 		//inserting values into passenger table
-		_, err = db.Exec("insert into shopping_cart_user (UserID) values(?)", userID)
+		result, err := db.Exec("insert into shopping_cart_user (UserID) values(?)", userID)
 		//Handling error of SQL statement
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusBadRequest)
 		}
+
+		id, err := result.LastInsertId()
+		fmt.Fprint(w, id)
 		w.WriteHeader(http.StatusAccepted)
 	} else if r.Method == "GET" {
 		querystringmap := r.URL.Query()
