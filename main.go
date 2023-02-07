@@ -151,8 +151,8 @@ func checkoutEndpoint(w http.ResponseWriter, r *http.Request) {
 					http.Error(w, err.Error(), http.StatusBadRequest)
 				}
 				w.WriteHeader(http.StatusAccepted)
-			}
-		}
+			} else { fmt.Println(err)}
+		}else { fmt.Println(err)}
 	} else if r.Method == "GET"{
 		querystringmap := r.URL.Query()
 		userID := querystringmap.Get("ShopCartID")
