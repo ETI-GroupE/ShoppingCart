@@ -267,6 +267,9 @@ func shoppingCartItemEndpoint(w http.ResponseWriter, r *http.Request) {
 				w.WriteHeader(http.StatusAccepted)
 			}
 		}
+	} else if r.Method == http.MethodOptions {
+		w.WriteHeader(http.StatusOK)
+		return
 	} else {
 		http.Error(w, "Bad Request", http.StatusBadRequest)
 	}
