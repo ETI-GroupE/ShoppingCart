@@ -88,7 +88,7 @@ func shoppingCartCreateEndpoint(w http.ResponseWriter, r *http.Request) {
 		defer db.Close()
 		
 		var shoppingCartUsers []shoppingCartUser
-		results, err := db.Query("select * from shopping_cart_user where UserID = ?", userID)
+		results, err := db.Query("select * from shopping_cart_user where IsCheckout = 0 AND UserID = ?", userID)
 		//Handling error of SQL statement
 		if err != nil {
 			http.Error(w, "Missing data", http.StatusBadRequest)
@@ -150,6 +150,7 @@ func checkoutEndpoint(w http.ResponseWriter, r *http.Request) {
 				if err != nil {
 					http.Error(w, err.Error(), http.StatusBadRequest)
 				}
+				
 			} else { fmt.Println(err)}
 		}else { fmt.Println(err)}
 	} else if r.Method == "GET"{
