@@ -28,12 +28,12 @@ type shoppingCartUser struct {
 }
 
 type checkout struct {
-	ShopCartID   int    `json:"shopCartID"`
-	EmailAddr	 string	`json:"emailAddr"`
-	Shipping	 string `json:"shipping"`
-	PostalCode 	 int 	`json:"postalCode"`
-	CreditCard	 string `json:"creditCard"`
-	TotalPayment int 	`json:"totalPayment"`
+	ShopCartID   int    	`json:"shopCartID"`
+	EmailAddr	 string		`json:"emailAddr"`
+	Shipping	 string 	`json:"shipping"`
+	PostalCode 	 int 		`json:"postalCode"`
+	CreditCard	 string 	`json:"creditCard"`
+	TotalPayment float64 	`json:"totalPayment"`
 }
 
 func main() {
