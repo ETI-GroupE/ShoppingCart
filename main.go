@@ -47,7 +47,10 @@ func main() {
 }
 
 func shoppingCartCreateEndpoint(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Access-Control-Allow-Origin", "*")
+	header := w.Header()
+	header.Add("Access-Control-Allow-Origin", "*")
+	header.Add("Access-Control-Allow-Methods", "DELETE, POST, GET, OPTIONS")
+	header.Add("Access-Control-Allow-Headers", "Content-Type, Authorization, X-Requested-With")
 	dbApiKey := os.Getenv("API_KEY")
 	dbReadApiKey := os.Getenv("READ_API_KEY")
 	dbPassword := os.Getenv("DB_PASSWORD")
@@ -111,7 +114,10 @@ func shoppingCartCreateEndpoint(w http.ResponseWriter, r *http.Request) {
 }
 
 func checkoutEndpoint(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Access-Control-Allow-Origin", "*")
+	header := w.Header()
+	header.Add("Access-Control-Allow-Origin", "*")
+	header.Add("Access-Control-Allow-Methods", "DELETE, POST, GET, OPTIONS")
+	header.Add("Access-Control-Allow-Headers", "Content-Type, Authorization, X-Requested-With")
 	dbApiKey := os.Getenv("API_KEY")
 	dbReadApiKey := os.Getenv("READ_API_KEY")
 	dbPassword := os.Getenv("DB_PASSWORD")
@@ -184,7 +190,10 @@ func checkoutEndpoint(w http.ResponseWriter, r *http.Request) {
 }
 
 func shoppingCartItemEndpoint(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Access-Control-Allow-Origin", "*")
+	header := w.Header()
+	header.Add("Access-Control-Allow-Origin", "*")
+	header.Add("Access-Control-Allow-Methods", "DELETE, POST, GET, OPTIONS")
+	header.Add("Access-Control-Allow-Headers", "Content-Type, Authorization, X-Requested-With")
 	dbApiKey := os.Getenv("API_KEY")
 	dbReadApiKey := os.Getenv("READ_API_KEY")
 	dbPassword := os.Getenv("DB_PASSWORD")
