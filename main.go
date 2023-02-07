@@ -40,7 +40,7 @@ func main() {
 	router := mux.NewRouter()
 	router.HandleFunc("/api/v1/shoppingCart", shoppingCartItemEndpoint).Methods("GET","POST")
 	router.HandleFunc("/api/v1/shoppingCartUser", shoppingCartCreateEndpoint).Methods("GET","POST")
-	router.HandleFunc("/api/v1/checkout", checkoutEndpoint).Methods("GET","POST")
+	router.HandleFunc("/api/v1/checkout", checkoutEndpoint).Methods("GET","POST", "OPTIONS")
 	fmt.Println("Listening at port 5000")
 
 	log.Fatal(http.ListenAndServe(":5000", router))
@@ -118,7 +118,6 @@ func checkoutEndpoint(w http.ResponseWriter, r *http.Request) {
 	header.Add("Access-Control-Allow-Origin", "*")
 	header.Add("Access-Control-Allow-Methods", "DELETE, POST, GET, OPTIONS")
 	header.Add("Access-Control-Allow-Headers", "Content-Type, Authorization, X-Requested-With")
-	w.WriteHeader(http.StatusOK)
 	dbApiKey := os.Getenv("API_KEY")
 	dbReadApiKey := os.Getenv("READ_API_KEY")
 	dbPassword := os.Getenv("DB_PASSWORD")
@@ -185,6 +184,9 @@ func checkoutEndpoint(w http.ResponseWriter, r *http.Request) {
 		output, _ := json.Marshal(checkoutCart)
 		w.WriteHeader(http.StatusAccepted)
 		fmt.Fprintf(w, string(output))
+	} else if r.Method == http.MethodOptions {
+		w.WriteHeader(http.StatusOK)
+		return
 	} else{
 		http.Error(w, "Bad Request", http.StatusBadRequest)
 	}
