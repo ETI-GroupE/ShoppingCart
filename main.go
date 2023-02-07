@@ -130,6 +130,7 @@ func checkoutEndpoint(w http.ResponseWriter, r *http.Request) {
 			if err := json.Unmarshal(body, &checkout); err == nil{
 				//Opening database connection
 				db, err := sql.Open("mysql", dbUser + ":" + dbPassword + "@tcp(" + dbApiKey + ")/" + dbName)
+				// db, err := sql.Open("mysql", "root:root@tcp(127.0.0.1:5221)/etiAssign")
 				// handle error upon failure
 				if err != nil {
 					http.Error(w, err.Error(), http.StatusBadRequest)
@@ -149,7 +150,6 @@ func checkoutEndpoint(w http.ResponseWriter, r *http.Request) {
 				if err != nil {
 					http.Error(w, err.Error(), http.StatusBadRequest)
 				}
-				w.WriteHeader(http.StatusAccepted)
 			} else { fmt.Println(err)}
 		}else { fmt.Println(err)}
 	} else if r.Method == "GET"{
@@ -157,6 +157,7 @@ func checkoutEndpoint(w http.ResponseWriter, r *http.Request) {
 		userID := querystringmap.Get("ShopCartID")
 		//Opening database connection
 		db, err := sql.Open("mysql", dbUser + ":" + dbPassword + "@tcp(" + dbReadApiKey + ")/" + dbName)
+		//db, err := sql.Open("mysql", "root:root@tcp(127.0.0.1:5221)/etiAssign")
 		// handle error upon failure
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusBadRequest)
